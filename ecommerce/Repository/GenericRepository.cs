@@ -9,14 +9,28 @@ namespace ecommerce.Repository
 		public GenericRepository(ecommerceContext context) {
 			_context = context;
 		}
-		public List<TEntity> GetAll()
+		public List<TEntity> GetAll(params string[] includes)
 		{
-			return _context.Set<TEntity>().ToList();
-		}
+			var query = _context.Set<TEntity>().Where(e => e.isDeleted == false&&e.isActive==true).AsQueryable();
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+			return query.ToList();
+        }
+        public List<TEntity> GetAll(Func<TEntity, bool> filter, params string[] includes)
+        {
+            var query = _context.Set<TEntity>().Where(e => e.isDeleted == false && e.isActive == true).Where(filter).AsQueryable();
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return query.ToList();
+        }
 
         public TEntity GetById(int id,params string[] includes)
         {
-            var query = _context.Set<TEntity>().AsQueryable();
+            var query = _context.Set<TEntity>().Where(e => e.isDeleted == false && e.isActive == true).AsQueryable();
             foreach (var include in includes)
 			{
                 query = query.Include(include);
@@ -40,7 +54,13 @@ namespace ecommerce.Repository
 
 		public TEntity GetFirstByFilter(Func<TEntity, bool> filter)
 		{
-			return _context.Set<TEntity>().FirstOrDefault(filter);
+			return _context.Set<TEntity>().Where(e => e.isDeleted == false && e.isActive == true).FirstOrDefault(filter);
 		}
-	}
+
+        public void softDelete(TEntity entity)
+        {
+            entity.isDeleted = true;
+        }
+
+    }
 }

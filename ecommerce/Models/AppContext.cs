@@ -12,8 +12,8 @@ namespace ecommerce.Models
 		//	base.OnConfiguring(optionsBuilder);
 		//}
 
-		DbSet<Product> Products { get; set; } 
-		DbSet<ProductCategory> Categories { get; set; }
-		DbSet<ProductType> Types { get; set; }
+		public DbSet<Product> Products { get; set; } 
+		public DbSet<ProductCategory> Categories { get; set; }
+		public DbSet<ProductType> Types { get; set; }
 	}
 }

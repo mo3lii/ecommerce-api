@@ -48,7 +48,52 @@ namespace ecommerce.Controllers
             var productDTO = mapper.productToUpdateDTO(p);
             return Ok(productDTO);
         }
-		[HttpPost]
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> update(int id , [FromForm] ProductPostDTO productDTO)
+        {
+            
+            var product = unit.ProductRepository.GetById(id);
+            if (product == null) return NotFound();
+            var updatedProduct = new Product()
+            {
+                Id = id,
+                Name = productDTO.Name,
+                Description = productDTO.Description,
+                Price = productDTO.Price,
+                Sale = productDTO.Sale,
+                Stock = productDTO.Stock,
+                TypeId = productDTO.TypeId,
+                CategoryId = productDTO.CategoryId,
+                ImageURL=product.ImageURL,
+                DateCreated=product.DateCreated
+                
+            };
+            if (productDTO.Image != null)
+            {
+                var imageName = await SaveImage(productDTO.Image);
+                updatedProduct.ImageURL = "img/" + imageName;
+            }
+            unit.ProductRepository.Update(updatedProduct);
+            unit.SaveChanges();
+            return Ok(updatedProduct);
+
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var product = unit.ProductRepository.GetById(id);
+            if(product != null)
+            {
+                product.isDeleted = true;
+                unit.ProductRepository.Update(product);
+                unit.SaveChanges();
+                return Ok();
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
 		public async Task<IActionResult> Add( [FromForm]ProductPostDTO productDTO) {
 
             if (productDTO.Image != null)
@@ -102,6 +147,8 @@ namespace ecommerce.Controllers
 
             return NotFound();
         }
+
+
 
     }
 }

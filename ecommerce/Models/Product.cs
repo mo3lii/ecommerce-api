@@ -24,6 +24,8 @@ namespace ecommerce.Models
         //reference for FK
         public virtual ProductType ProductType { get; set; }
         public virtual ProductCategory ProductCategory { get; set; }
+        public bool isDeleted { get; set; }=false;
+        public bool isActive { get; set; } = true;
 
-	}
+    }
 }

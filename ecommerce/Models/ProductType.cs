@@ -11,5 +11,8 @@ namespace ecommerce.Models
 		public string? Description { get; set; }
 
 		public virtual ICollection<Product> Products { get; set;}
-	}
+        public bool isDeleted { get; set; } = false;
+        public bool isActive { get; set; } = true;
+
+    }
 }
