@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ecommerce.Repository
 {
-    public class GenericRepository<TEntity> where TEntity : class,IEntity
+    public class GenericRepository<TEntity,TID> where TEntity : class,IEntity<TID>
 	{	
 		ecommerceContext _context;
 		public GenericRepository(ecommerceContext context) {
@@ -28,14 +28,14 @@ namespace ecommerce.Repository
             return query.ToList();
         }
 
-        public TEntity GetById(int id,params string[] includes)
+        public TEntity GetById(TID id,params string[] includes)
         {
             var query = _context.Set<TEntity>().Where(e => e.isDeleted == false && e.isActive == true).AsQueryable();
             foreach (var include in includes)
 			{
                 query = query.Include(include);
 			}
-			return query.FirstOrDefault(p=>p.Id==id);
+			return query.FirstOrDefault(p=>p.Id.Equals(id));
 
         }
         public void Insert(TEntity entity)
@@ -52,7 +52,7 @@ namespace ecommerce.Repository
 			_context.Entry(entity).State = EntityState.Deleted;
 		}
 
-		public TEntity GetFirstByFilter(Func<TEntity, bool> filter)
+        public TEntity GetFirstByFilter(Func<TEntity, bool> filter)
 		{
 			return _context.Set<TEntity>().Where(e => e.isDeleted == false && e.isActive == true).FirstOrDefault(filter);
 		}

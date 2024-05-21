@@ -2,9 +2,12 @@
 using ecommerce.HelperClasses;
 using ecommerce.Models;
 using ecommerce.Repository;
+using ecommerce.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace ecommerce.Controllers
 {
@@ -15,14 +18,17 @@ namespace ecommerce.Controllers
 		UnitOfWork unit;
 		IConfiguration configuration {  get; }
         Mapper mapper { get; }
-        public ProductController(UnitOfWork unit,IConfiguration configuration,Mapper mapper)
+        ProductService productService { get; }
+        public ProductController(UnitOfWork unit,IConfiguration configuration,Mapper mapper,ProductService productService)
         {
 			this.unit = unit;
 			this.configuration = configuration;
             this.mapper = mapper;
+            this.productService= productService;
         }
-        [HttpGet]
-		public IActionResult Get([FromQuery] int page=1, [FromQuery] int pageSize=1)
+        [HttpGet("byuser")]
+        [Authorize(Roles = "user")]
+        public IActionResult GetByUser([FromQuery] int page=1, [FromQuery] int pageSize=1)
 		{
 			if (page < 1 || pageSize < 1)
 			return BadRequest("Invalid page or pageSize value.");
@@ -32,20 +38,50 @@ namespace ecommerce.Controllers
 			int itemsToSkip = (page - 1) * pageSize ;
 			var productsPage = products.Skip(itemsToSkip).Take(pageSize).ToList();
 			if (productsPage.Count() == 0) return NotFound();
-			List<ProductDTO> productsDTOPage = mapper.ProductToDTO(productsPage);
+            var userIdClaim = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            List<ProductDTO> productsDTOPage = productService.getProductsDTOByUser(productsPage, userIdClaim);
 			return Ok(new {
                 currentPage= page,
                 totalPages= totalPagesNum,
                 products=productsDTOPage 
             });
 		}
+        [HttpGet]
+        public IActionResult Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1)
+        {
+            if (page < 1 || pageSize < 1)
+                return BadRequest("Invalid page or pageSize value.");
 
-		[HttpGet("{id}")]
-		public IActionResult GetById(int id)
-		{
+            var products = unit.ProductRepository.GetAll();
+            var totalPagesNum = Math.Ceiling((decimal)products.Count() / pageSize);
+            int itemsToSkip = (page - 1) * pageSize;
+            var productsPage = products.Skip(itemsToSkip).Take(pageSize).ToList();
+            if (productsPage.Count() == 0) return NotFound();
+            List<ProductDTO> productsDTOPage = mapper.ProductToDTO(productsPage);
+            return Ok(new
+            {
+                currentPage = page,
+                totalPages = totalPagesNum,
+                products = productsDTOPage
+            });
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
             var p = unit.ProductRepository.GetById(id, "ProductType", "ProductCategory");
-			if (p == null) return NotFound();
+            if (p == null) return NotFound();
             var productDTO = mapper.productToUpdateDTO(p);
+            return Ok(productDTO);
+        }
+        [HttpGet("{id}/byuser")]
+        [Authorize(Roles ="user")]
+        public IActionResult GetByIdByUser(int id)
+        {
+            var p = unit.ProductRepository.GetById(id, "ProductType", "ProductCategory");
+            if (p == null) return NotFound();
+            var userIdClaim = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var productDTO = productService.getProductDTOByUser(p,userIdClaim);
             return Ok(productDTO);
         }
 
@@ -148,7 +184,35 @@ namespace ecommerce.Controllers
             return NotFound();
         }
 
+        [HttpGet("similar/{id}")]
+        public IActionResult GetSimilar( int id ,int size=4 )
+        {
+       
+            var product = unit.ProductRepository.GetById(id);
+            if (product==null|| size < 1)
+                return BadRequest("Invalid page or pageSize value.");
 
+            var products = unit.ProductRepository.GetAll(p=>p.Id!=id&&(p.CategoryId==product.Id||p.TypeId==product.TypeId));
+            var productsPage = products.Take(size).ToList();
+            if (productsPage.Count() < size)
+            {
+
+                var general = unit.ProductRepository.GetAll(p=>p.Id!=product.Id).Take(size).ToList();
+                if(general.Count() == 0)
+                {
+                    return BadRequest();
+                }
+                var currentSize = productsPage.Count();
+                for (int i = 0; i < size - currentSize; i++)
+                {
+                    productsPage.Add(general[i]);
+
+                }
+
+            }
+            List<ProductDTO> productsDTOPage = mapper.ProductToDTO(productsPage);
+            return Ok(  productsDTOPage );
+        }
 
     }
 }

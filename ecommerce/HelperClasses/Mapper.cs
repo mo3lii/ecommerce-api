@@ -25,6 +25,8 @@ namespace ecommerce.HelperClasses
                 DateCreated = product.DateCreated,
                 Description = product.Description,
                 ImageURL = configuration.GetValue<string>("MainHost") + product.ImageURL,
+                isAddedToCart = false,
+ 
             };
         }
         public List<ProductDTO> ProductToDTO(List<Product> productsList)
@@ -66,6 +68,33 @@ namespace ecommerce.HelperClasses
                 Description = product.Description,
                 Image = configuration.GetValue<string>("MainHost") + product.ImageURL,
             };
+        }
+
+        public CartGetDTO CartToCartGetDTO(UserCart cartProduct)
+        {
+            return new CartGetDTO()
+            {
+                Id = cartProduct.Id,
+                ProductId = cartProduct.ProductId,
+                quantity = cartProduct.Quantity,
+                Name = cartProduct.Product.Name,
+                Type = cartProduct.Product.ProductType.Name,
+                Category = cartProduct.Product.ProductCategory.Name,
+                Price = cartProduct.Product.Price,
+                Sale = cartProduct.Product.Sale,
+                Stock = cartProduct.Product.Stock,
+                Description = cartProduct.Product.Description,
+                ImageURL = configuration.GetValue<string>("MainHost") + cartProduct.Product.ImageURL,
+            };
+        }
+        public List<CartGetDTO> CartToCartGetDTO(List<UserCart> cartProductList)
+        {
+            List<CartGetDTO> cartProductDTOList = new List<CartGetDTO>();
+            foreach (var cartProduct in cartProductList)
+            {
+                cartProductDTOList.Add(CartToCartGetDTO(cartProduct));
+            }
+            return cartProductDTOList;
         }
 
     }

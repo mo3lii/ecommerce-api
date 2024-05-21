@@ -2,7 +2,7 @@
 
 namespace ecommerce.Models
 {
-	public class ProductCategory : IEntity
+	public class ProductCategory : IEntity<int>
     {
 		[Key]
 		public int Id { get; set; }

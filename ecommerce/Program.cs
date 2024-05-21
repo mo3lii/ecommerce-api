@@ -2,7 +2,11 @@
 using ecommerce.HelperClasses;
 using ecommerce.Models;
 using ecommerce.Repository;
+using ecommerce.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ecommerce
 {
@@ -20,12 +24,23 @@ namespace ecommerce
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ecommerceContext>(o =>
             {
-                o.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("mainString")); 
+                o.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("mainString"));
                 o.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
             builder.Services.AddScoped<UnitOfWork>();
             builder.Services.AddScoped<Mapper>();
+            builder.Services.AddScoped<ProductService>();
 
+            builder.Services.AddAuthentication(option => option.DefaultAuthenticateScheme = "myscheme")
+                  .AddJwtBearer("myscheme",
+                  //validate token
+                  op =>{
+                      op.TokenValidationParameters = new TokenValidationParameters(){
+                          IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("Jwt:Key"))),
+                          ValidateIssuer = false,
+                          ValidateAudience = false
+                      };
+                  });
 
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
             builder.Services.AddCors(options =>

@@ -6,47 +6,73 @@ namespace ecommerce.Repository
 	public class UnitOfWork
 	{
 		private ecommerceContext context;
-		private GenericRepository<Product> productRepository;
-		private GenericRepository<ProductCategory> categoryRepository;
-		private GenericRepository<ProductType> typeRepository;
-		public UnitOfWork(ecommerceContext _context)
+		private GenericRepository<Product,int> productRepository;
+		private GenericRepository<ProductCategory,int> categoryRepository;
+		private GenericRepository<ProductType,int> typeRepository;
+		private GenericRepository<AppUser,Guid> usersRepository;
+		//private GenericRepository<UserCart,int> usersCartsRepository;
+		private CartRepository usersCartsRepository;
+        public UnitOfWork(ecommerceContext _context)
 		{
 			context = _context;
 		}
-		public GenericRepository<Product> ProductRepository
+		public GenericRepository<Product,int> ProductRepository
 		{
 			get
 			{
 				if(productRepository == null)
 				{
-					productRepository = new GenericRepository<Product>(context);
+					productRepository = new GenericRepository<Product,int>(context);
 				}
 				return productRepository;
 			}			
 		}
-		public GenericRepository<ProductCategory> CategoryRepository
+		public GenericRepository<ProductCategory,int> CategoryRepository
 		{
 			get
 			{
 				if (categoryRepository == null)
 				{
-					categoryRepository = new GenericRepository<ProductCategory>(context);
+					categoryRepository = new GenericRepository<ProductCategory,int>(context);
 				}
 				return categoryRepository;
 			}
 		}
-		public GenericRepository<ProductType> TypeRepository
+		public GenericRepository<ProductType,int> TypeRepository
 		{
 			get
 			{
 				if (typeRepository == null)
 				{
-					typeRepository = new GenericRepository<ProductType>(context);
+					typeRepository = new GenericRepository<ProductType,int>(context);
 				}
 				return typeRepository;
 			}
 		}
-		public void SaveChanges()
+        public GenericRepository<AppUser, Guid> UserRepository
+        {
+            get
+            {
+                if (usersRepository == null)
+                {
+                    usersRepository = new GenericRepository<AppUser, Guid>(context);
+                }
+                return usersRepository;
+            }
+        }
+
+        public CartRepository UsersCartsRepository
+        {
+            get
+            {
+                if (usersCartsRepository == null)
+                {
+                    usersCartsRepository = new CartRepository(context);
+                }
+                return usersCartsRepository;
+            }
+        }
+        public void SaveChanges()
 		{
 			context.SaveChanges();
 		}

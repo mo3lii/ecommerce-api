@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ecommerce.Models
 {
-	public class ProductType : IEntity
+	public class ProductType : IEntity<int>
     {
 		[Key]
 		public int Id { get; set; }

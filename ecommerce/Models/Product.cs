@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ecommerce.Models
 {
-	public class Product:IEntity
+	public class Product:IEntity<int>
 	{
         [Key]
 		public int Id { get; set; }
@@ -21,11 +21,16 @@ namespace ecommerce.Models
 		public int? Sale { get; set; }
         public int Stock { get; set; }
         public DateTime? DateCreated { get; set; }
+        
+        public bool isDeleted { get; set; }=false;
+        public bool isActive { get; set; } = true;
+
         //reference for FK
         public virtual ProductType ProductType { get; set; }
         public virtual ProductCategory ProductCategory { get; set; }
-        public bool isDeleted { get; set; }=false;
-        public bool isActive { get; set; } = true;
+
+        public virtual ICollection<UserCart> usercarts { get; set;}
+
 
     }
 }

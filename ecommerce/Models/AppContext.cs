@@ -15,5 +15,7 @@ namespace ecommerce.Models
 		public DbSet<Product> Products { get; set; } 
 		public DbSet<ProductCategory> Categories { get; set; }
 		public DbSet<ProductType> Types { get; set; }
-	}
+		public DbSet<AppUser> Users { get; set; }
+		public DbSet<UserCart> UsersCarts { get; set; }
+    }
 }

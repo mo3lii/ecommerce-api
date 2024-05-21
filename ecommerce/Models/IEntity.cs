@@ -1,8 +1,8 @@
 ﻿namespace ecommerce.Models
 {
-    public interface IEntity
+    public interface IEntity<T> 
     {
-        int Id { get; }
+        T Id { get; set; }
         bool isDeleted { get; set; }
         bool isActive {  get; set; }
     }

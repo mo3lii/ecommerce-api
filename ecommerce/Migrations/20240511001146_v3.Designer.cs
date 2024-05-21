@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ecommerce.Models;
 
@@ -11,9 +12,11 @@ using ecommerce.Models;
 namespace ecommerce.Migrations
 {
     [DbContext(typeof(ecommerceContext))]
-    partial class ecommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20240511001146_v3")]
+    partial class v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,38 +170,6 @@ namespace ecommerce.Migrations
                     b.ToTable("Types");
                 });
 
-            modelBuilder.Entity("ecommerce.Models.UserCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersCarts");
-                });
-
             modelBuilder.Entity("ecommerce.Models.Product", b =>
                 {
                     b.HasOne("ecommerce.Models.ProductCategory", "ProductCategory")
@@ -216,25 +187,6 @@ namespace ecommerce.Migrations
                     b.Navigation("ProductCategory");
 
                     b.Navigation("ProductType");
-                });
-
-            modelBuilder.Entity("ecommerce.Models.UserCart", b =>
-                {
-                    b.HasOne("ecommerce.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ecommerce.Models.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ecommerce.Models.ProductCategory", b =>
