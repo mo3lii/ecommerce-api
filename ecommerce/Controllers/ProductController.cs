@@ -71,7 +71,7 @@ namespace ecommerce.Controllers
         {
             var p = unit.ProductRepository.GetById(id, "ProductType", "ProductCategory");
             if (p == null) return NotFound();
-            var productDTO = mapper.productToUpdateDTO(p);
+            var productDTO = mapper.ProductToDTO(p);
             return Ok(productDTO);
         }
         [HttpGet("{id}/byuser")]

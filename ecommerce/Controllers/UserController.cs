@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using ecommerce.DTO;
 namespace ecommerce.Controllers
 {
     [Route("api/[controller]")]
@@ -41,10 +42,10 @@ namespace ecommerce.Controllers
                 LastName = request.lastName,
                 Email = request.email,
                 PasswordHash = hashedPassword,
-                Role = request.role ?? "admin"
+                Role = "user"
             });
             unit.SaveChanges();
-            return Ok("User registered successfully");
+            return Ok(new { message = "User registered successfully" });
         }
 
         [HttpPost("login")]
@@ -84,6 +85,17 @@ namespace ecommerce.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
             return Ok(new { id = userIdClaim.Value });
+        }
+
+        [HttpPost("checkmail")]
+        public IActionResult isMailAvailable([FromBody]EmailDTO emailDTO)
+        {
+            var user = unit.UserRepository.GetFirstByFilter(u=>u.Email == emailDTO.email.Trim());
+            if(user == null)
+            {
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }

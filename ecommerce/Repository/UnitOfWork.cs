@@ -10,8 +10,10 @@ namespace ecommerce.Repository
 		private GenericRepository<ProductCategory,int> categoryRepository;
 		private GenericRepository<ProductType,int> typeRepository;
 		private GenericRepository<AppUser,Guid> usersRepository;
-		//private GenericRepository<UserCart,int> usersCartsRepository;
 		private CartRepository usersCartsRepository;
+        private GenericRepository<Order, int> ordersRepository;
+        private GenericRepository<OrderProduct, int> ordersProductsRepository;
+
         public UnitOfWork(ecommerceContext _context)
 		{
 			context = _context;
@@ -70,6 +72,29 @@ namespace ecommerce.Repository
                     usersCartsRepository = new CartRepository(context);
                 }
                 return usersCartsRepository;
+            }
+        }
+
+        public GenericRepository<Order, int> OrdersRepository
+        {
+            get
+            {
+                if (ordersRepository == null)
+                {
+                    ordersRepository = new GenericRepository<Order, int>(context);
+                }
+                return ordersRepository;
+            }
+        }
+        public GenericRepository<OrderProduct, int> OrdersProductsRepository
+        {
+            get
+            {
+                if (ordersProductsRepository == null)
+                {
+                    ordersProductsRepository = new GenericRepository<OrderProduct, int>(context);
+                }
+                return ordersProductsRepository;
             }
         }
         public void SaveChanges()

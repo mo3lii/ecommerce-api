@@ -6,6 +6,5 @@
         public string lastName { get; set; }
         public string email { get; set; }
         public string password{ get; set; } // Hashed password
-        public string role { get; set; }
     }
 }

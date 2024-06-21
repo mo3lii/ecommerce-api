@@ -30,6 +30,7 @@ namespace ecommerce
             builder.Services.AddScoped<UnitOfWork>();
             builder.Services.AddScoped<Mapper>();
             builder.Services.AddScoped<ProductService>();
+            builder.Services.AddScoped<OrderService>();
 
             builder.Services.AddAuthentication(option => option.DefaultAuthenticateScheme = "myscheme")
                   .AddJwtBearer("myscheme",
