@@ -31,8 +31,8 @@ namespace ecommerce.Controllers
         [HttpGet("products")]
         public IActionResult Products()
         {
-            //var userIdClaim = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var userIdClaim = Guid.Parse("5d62baf8-112c-4fa4-83b5-138f15aa2122");
+            var userIdClaim = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            //var userIdClaim = Guid.Parse("5d62baf8-112c-4fa4-83b5-138f15aa2122");
             var products = mapper.CartToCartGetDTO(orderService.GetOrderCartProducts(userIdClaim).ToList());
             return Ok(products);
         }

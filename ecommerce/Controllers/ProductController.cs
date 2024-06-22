@@ -192,7 +192,7 @@ namespace ecommerce.Controllers
             if (product==null|| size < 1)
                 return BadRequest("Invalid page or pageSize value.");
 
-            var products = unit.ProductRepository.GetAll(p=>p.Id!=id&&(p.CategoryId==product.Id||p.TypeId==product.TypeId));
+            var products = unit.ProductRepository.GetAll(p=>p.Id!=id&&(p.CategoryId==product.CategoryId));
             var productsPage = products.Take(size).ToList();
             if (productsPage.Count() < size)
             {

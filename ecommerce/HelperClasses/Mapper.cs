@@ -18,7 +18,9 @@ namespace ecommerce.HelperClasses
                 Id = product.Id,
                 Name = product.Name,
                 Type = product.ProductType.Name,
+                typeId = product.TypeId,
                 Category = product.ProductCategory.Name,
+                categoryId = product.CategoryId,
                 Price = product.Price,
                 Sale = product.Sale,
                 Stock = product.Stock,
@@ -66,7 +68,7 @@ namespace ecommerce.HelperClasses
                 Sale = product.Sale,
                 Stock = product.Stock,
                 Description = product.Description,
-                Image = configuration.GetValue<string>("MainHost") + product.ImageURL,
+                imageURL = configuration.GetValue<string>("MainHost") + product.ImageURL,
             };
         }
 

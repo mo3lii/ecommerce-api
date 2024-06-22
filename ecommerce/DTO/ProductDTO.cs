@@ -9,7 +9,9 @@ namespace ecommerce.DTO
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Type { get; set; }
+		public int typeId { get; set; }
 		public string Category { get; set; }
+		public int categoryId { get; set; }
         public string Description { get; set; }
 		public string ImageURL { get; set; }
 		public decimal Price { get; set; }
