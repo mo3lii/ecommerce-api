@@ -66,6 +66,29 @@ namespace ecommerce.Controllers
             });
         }
 
+        [HttpGet("search")]
+        public IActionResult SearchByName([FromQuery] string SearchWord,[FromQuery] int page = 1, [FromQuery] int pageSize = 1)
+        {
+            if (page < 1 || pageSize < 1)
+                return BadRequest("Invalid page or pageSize value.");
+
+            SearchWord=SearchWord.ToLower().Replace(" ","");
+            var products = unit.ProductRepository.GetAll().Where(
+                p=>p.Name.Replace(" ", "").ToLower().Contains(SearchWord)||
+                p.ProductCategory.Name.Replace(" ", "").ToLower().Contains(SearchWord)|| 
+                p.ProductType.Name.Replace(" ", "").ToLower().Contains(SearchWord)
+                );
+            var totalPagesNum = Math.Ceiling((decimal)products.Count() / pageSize);
+            int itemsToSkip = (page - 1) * pageSize;
+            var productsPage = products.Skip(itemsToSkip).Take(pageSize).ToList();
+            List<ProductDTO> productsDTOPage = mapper.ProductToDTO(productsPage);
+            return Ok(new
+            {
+                currentPage = page,
+                totalPages = totalPagesNum,
+                products = productsDTOPage
+            });
+        }
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {

@@ -34,7 +34,6 @@ namespace ecommerce
 
             builder.Services.AddAuthentication(option => option.DefaultAuthenticateScheme = "myscheme")
                   .AddJwtBearer("myscheme",
-                  //validate token
                   op =>{
                       op.TokenValidationParameters = new TokenValidationParameters(){
                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("Jwt:Key"))),
@@ -52,6 +51,7 @@ namespace ecommerce
                     builder.AllowAnyOrigin();
                     builder.AllowAnyMethod();
                     builder.AllowAnyHeader();
+                   
                 });
             });
 
